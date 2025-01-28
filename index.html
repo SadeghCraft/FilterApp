@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Options</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        h1 {
+            color: #444;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            margin-top: 5px;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .range-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .range-inputs input {
+            flex: 1;
+        }
+
+        .note {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Filter Options</h1>
+
+        <!-- Year of Birth Range -->
+        <label for="yearOfBirth">Year of Birth Range:</label>
+        <div class="range-inputs">
+            <input type="number" id="yearOfBirthMin" placeholder="Min Year" min="1893" max="1996">
+            <input type="number" id="yearOfBirthMax" placeholder="Max Year" min="1893" max="1996">
+        </div>
+        <div class="note">Allowed range: 1893 - 1996</div>
+
+        <!-- Education Select -->
+        <label for="education">Education:</label>
+        <select id="education">
+            <option value="">Any</option>
+            <option value="Basic">Basic</option>
+            <option value="2n Cycle">2n Cycle</option>
+            <option value="Graduation">Graduation</option>
+            <option value="Master">Master</option>
+            <option value="PhD">PhD</option>
+        </select>
+
+        <!-- Income Range -->
+        <label for="income">Income Range:</label>
+        <div class="range-inputs">
+            <input type="number" id="incomeMin" placeholder="Min Income" min="1730" max="666666">
+            <input type="number" id="incomeMax" placeholder="Max Income" min="1730" max="666666">
+        </div>
+        <div class="note">Allowed range: 1730 - 666666</div>
+
+        <!-- NumWebPurchases Range -->
+        <label for="webPurchases">Number of Web Purchases:</label>
+        <div class="range-inputs">
+            <input type="number" id="webPurchasesMin" placeholder="Min Web Purchases" min="0" max="27">
+            <input type="number" id="webPurchasesMax" placeholder="Max Web Purchases" min="0" max="27">
+        </div>
+        <div class="note">Allowed range: 0 - 27</div>
+
+        <!-- NumStorePurchases Range -->
+        <label for="storePurchases">Number of Store Purchases:</label>
+        <div class="range-inputs">
+            <input type="number" id="storePurchasesMin" placeholder="Min Store Purchases" min="0" max="13">
+            <input type="number" id="storePurchasesMax" placeholder="Max Store Purchases" min="0" max="13">
+        </div>
+        <div class="note">Allowed range: 0 - 13</div>
+
+        <!-- Recency Range -->
+        <label for="recency">Recency:</label>
+        <div class="range-inputs">
+            <input type="number" id="recencyMin" placeholder="Min Recency" min="0" max="99">
+            <input type="number" id="recencyMax" placeholder="Max Recency" min="0" max="99">
+        </div>
+        <div class="note">Allowed range: 0 - 99</div>
+
+        <!-- AcceptedCmp1 Select -->
+        <label for="acceptedCmp">Accepted Campaign 1:</label>
+        <select id="acceptedCmp">
+            <option value="">Any</option>
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+
+        <!-- Submit Button -->
+        <button onclick="applyFilters()">Apply Filters</button>
+
+        <!-- Results Section -->
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        let data = [];
+
+        // Load JSON data dynamically
+        fetch('data/marketing_campaign_kaggle.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data = jsonData;
+                console.log('Data loaded successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error loading JSON:', error);
+                alert('Failed to load data. Please check the JSON file.');
+            });
+
+        // Apply filters
+        function applyFilters() {
+            const yearOfBirthMin = parseInt(document.getElementById('yearOfBirthMin').value) || 1893;
+            const yearOfBirthMax = parseInt(document.getElementById('yearOfBirthMax').value) || 1996;
+            const education = document.getElementById('education').value;
+            const incomeMin = parseInt(document.getElementById('incomeMin').value) || 1730;
+            const incomeMax = parseInt(document.getElementById('incomeMax').value) || 666666;
+            const webPurchasesMin = parseInt(document.getElementById('webPurchasesMin').value) || 0;
+            const webPurchasesMax = parseInt(document.getElementById('webPurchasesMax').value) || 27;
+            const storePurchasesMin = parseInt(document.getElementById('storePurchasesMin').value) || 0;
+            const storePurchasesMax = parseInt(document.getElementById('storePurchasesMax').value) || 13;
+            const recencyMin = parseInt(document.getElementById('recencyMin').value) || 0;
+            const recencyMax = parseInt(document.getElementById('recencyMax').value) || 99;
+            const acceptedCmp = document.getElementById('acceptedCmp').value;
+
+            const filtered = data.filter(item => {
+                return (
+                    item.Year_Birth >= yearOfBirthMin && item.Year_Birth <= yearOfBirthMax &&
+                    (!education || item.Education === education) &&
+                    item.Income >= incomeMin && item.Income <= incomeMax &&
+                    item.NumWebPurchases >= webPurchasesMin && item.NumWebPurchases <= webPurchasesMax &&
+                    item.NumStorePurchases >= storePurchasesMin && item.NumStorePurchases <= storePurchasesMax &&
+                    item.Recency >= recencyMin && item.Recency <= recencyMax &&
+                    (!acceptedCmp || item.AcceptedCmp1.toString() === acceptedCmp)
+                );
+            });
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+
+            if (filtered.length > 0) {
+                const percentage = ((filtered.length / data.length) * 100).toFixed(2);
+                resultsDiv.innerHTML = `<p>Found ${filtered.length} records (${percentage}% of total).</p><ul>${filtered.map(item => `<li>ID: ${item.ID}</li>`).join('')}</ul>`;
+            } else {
+                resultsDiv.innerHTML = '<p>No records found matching the criteria.</p>';
+            }
+        }
+    </script>
+</body>
+
+</html>
